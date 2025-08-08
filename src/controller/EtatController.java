@@ -1,41 +1,46 @@
 package controller;
 
-import model.Etat;
-import repository.EtatRepository;
-import repository.FactureRepository;
+import domain.model.Etat;
+import domain.repository.IEtatRepository;
+import domain.repository.IFactureRepository;
 import utils.Console;
-import view.GestionView;
+import view.IMainView;
 
 public class EtatController {
-	private final FactureRepository repoFacture;
-    private final EtatRepository repoEtat;
-	private final GestionView view;
+	private final IFactureRepository repoFacture;
+    private final IEtatRepository repoEtat;
+	private final IMainView view;
+	private static final String REGEX_COLOR = "^#[0-9a-fA-F]{6}$";
 	
-	public EtatController(EtatRepository repoEtat, FactureRepository repoFacture,GestionView view) {
+	public EtatController(IEtatRepository repoEtat, IFactureRepository repoFacture, IMainView view) {
 		this.repoEtat = repoEtat;
 		this.repoFacture = repoFacture;
 		this.view = view;
 	}
 	
-	 public void gererEtats() {
-	        int choix;
-	        do {
-	            view.afficherMenuEtat();
-	            choix = Console.inputInteger("Choix : ");
-
-	            switch (choix) {
-	                case 1 -> addNewEtat();
-	                case 2 -> updateEtat();
-	                case 3 -> deleteEtat();
-	                case 4 -> afficherEtats();
-	                case 0 -> Console.afficherMessage("Retour au menu");
-	            }
-	        } while (choix != 0);
-	    }
+	public void gererEtats() {
+		int choix;
+		do {
+			
+			view.afficherMenuEtat();
+			choix = Console.inputInteger("Choix : ");
+			
+			switch (choix) {
+				case 1 -> addNewEtat();
+				case 2 -> updateEtat();
+				case 3 -> deleteEtat();
+				case 4 -> afficherEtats();
+				case 0 -> Console.afficherMessage("Retour au menu");
+			}
+		} while (choix != 0);
+	}
 	 
 	private void addNewEtat() {
 		String nom = Console.inputString("Nom de l'état : ");
-		String couleur = Console.inputString("Couleur de l'état (#xxxxxx) : ");
+		String couleur;		
+		do {
+		    couleur = Console.inputString("Couleur de l'état (#xxxxxx) : ");
+		} while (!validateColor(couleur));
 		
 		Etat e = new Etat(nom, couleur);
 		boolean result = repoEtat.addEtat(e);
@@ -51,7 +56,6 @@ public class EtatController {
 	    Etat etat = repoEtat.getEtatByid(index-1);
 
 	    boolean modifier = true;
-
 	    while (modifier) {
 	    	view.optionModificationEtat();
 	        int choix = Console.inputInteger("Choix : ");
@@ -63,7 +67,11 @@ public class EtatController {
 	                Console.afficherMessage("Nom mis à jour.");
 	            }
 	            case 2 -> {
-	                String nouvelleCouleur = Console.inputString("Nouvelle couleur (#xxxxxx) : ");
+	                String nouvelleCouleur;
+	                do {
+	                	nouvelleCouleur = Console.inputString("Nouvelle couleur (#xxxxxx) : ");
+	                }while (!validateColor(nouvelleCouleur));
+	                
 	                etat.setEtat(etat.getNom(), nouvelleCouleur);
 	                Console.afficherMessage("Couleur mise à jour.");
 	            }
@@ -74,9 +82,6 @@ public class EtatController {
 	        }
 	    }
 	}
-
-	
-
 	
 	private void deleteEtat() {
 		afficherEtats();
@@ -101,6 +106,10 @@ public class EtatController {
 	private void afficherEtats() {
 		view.afficherEtats(repoEtat.getEtats());
     }
+	
+	private boolean validateColor(String couleur) {
+	    return (couleur != null && couleur.matches(REGEX_COLOR));
+	}
 	
 	private void resultMessage(boolean result, String success, String fail) {
 		if (result) {

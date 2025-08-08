@@ -2,20 +2,26 @@ package controller;
 
 import java.time.LocalDate;
 import java.util.List;
-import model.*;
-import repository.EtatRepository;
-import repository.FactureRepository;
+import domain.model.ClientFinal;
+import domain.model.Etat;
+import domain.model.Facture;
+import domain.model.Fournisseur;
+import domain.model.Partenaire;
+import domain.model.Particulier;
+import domain.model.Type;
+import domain.repository.IEtatRepository;
+import domain.repository.IFactureRepository;
 import utils.Console;
-import view.GestionView;
+import view.IMainView;
 
 public class FactureController {    
-    private final FactureRepository repoFacture;
-    private final EtatRepository repoEtat;
+    private final IFactureRepository repoFacture;
+    private final IEtatRepository repoEtat;
     private Particulier clientDirect;
 
-    private final GestionView view;
+    private final IMainView view;
     
-    public FactureController(EtatRepository repoEtat, FactureRepository repoFacture,  Particulier clientDirect, GestionView view) {
+    public FactureController(IEtatRepository repoEtat, IFactureRepository repoFacture,  Particulier clientDirect, IMainView view) {
     	this.repoFacture = repoFacture;
         this.repoEtat = repoEtat;
         this.clientDirect = clientDirect;
@@ -37,6 +43,14 @@ public class FactureController {
                 case 0 -> continuer = false;
             }
         }
+    }
+    
+    private void afficherEtats() {
+		view.afficherEtats(repoEtat.getEtats());
+    }
+    
+    private void afficherFactures() {
+    	view.afficherFactures(repoFacture.getFactureOfClient(clientDirect));
     }
     
     
@@ -96,10 +110,14 @@ public class FactureController {
 
         double montant = Console.inputDouble("Montant HTVA : ");
 
-        double taux = Console.inputDouble("Taux TVA : ");
+        double taux = Console.inputDouble("Taux TVA (en %): ");
 
-        int type = Console.inputInteger("Type (1. Rentrée / 2. Dépense) : ");
+        int type = 0;
+        do {
+        	type = Console.inputInteger("Type : \n(1. Rentrée / 2. Dépense) : ");
+        }while(type != 1 && type != 2);
 
+       
         String partenaireNom = Console.inputString("Nom du partenaire : ");
 
         String numTva = null;
@@ -109,9 +127,12 @@ public class FactureController {
 
         Console.afficherMessage("État :");
         afficherEtats();
-        int etatId = Console.inputInteger("Choix : ");
+        int etat = 0;
+        do {
+        	etat = Console.inputInteger("Choix : ");
+        }while (etat < 1 || etat > repoEtat.getEtats().size());
 
-        ajouterFacture(nom, montant, taux, type, etatId, partenaireNom, numTva);
+        ajouterFacture(nom, montant, taux, type, etat, partenaireNom, numTva);
     }
     
     private void ajouterFacture(String nom, double montant, double taux, int numType, int numEtat, String partenaireNom, String numTva) {
@@ -121,8 +142,8 @@ public class FactureController {
     	var partenaire = construirePartenaire(numType, partenaireNom, numTva);
 
         var facture = new Facture (nom, LocalDate.now(), LocalDate.now(), montant, taux, nom, type, etat, partenaire, clientDirect);
-        var result = repoFacture.addFacture(facture);
         
+        var result = repoFacture.addFacture(facture);
         if (result) Console.afficherMessage("Facture enregistrée");
     }
 
@@ -151,14 +172,6 @@ public class FactureController {
     }
     
     
-    private void afficherEtats() {
-		view.afficherEtats(repoEtat.getEtats());
-    }
-    
-    private void afficherFactures() {
-    	view.afficherFactures(repoFacture.getFactureOfClient(clientDirect));
-    }
-    
     
     private void rechercherFacture() {
         String nom = Console.inputString("Nom facture (vide si pas de critère) : ");
@@ -168,10 +181,15 @@ public class FactureController {
         LocalDate date = null;
         if (!dateStr.isBlank()) date = LocalDate.parse(dateStr);
 
-        int type = Console.inputInteger("Type (1. Rentrée / 2. Dépense / 0 pour ignorer) : ");
+        int type = Console.inputInteger("Type :\n(1. Rentrée / 2. Dépense / 0 pour ignorer)\nChoix : ");
         
-        afficherEtats();
-        int etat = Console.inputInteger("État (0 pour ignorer) : ");
+        int etat = -1;
+        do {
+        	 Console.afficherMessage("État :\n(0 pour ignorer)");
+             afficherEtats();
+             etat = Console.inputInteger("Choix : ");
+        }while(etat < 0 || etat > repoEtat.getEtats().size());
+       
 
         var resultats = rechercherFactures(nom, date, type, etat);
 
@@ -181,6 +199,7 @@ public class FactureController {
             view.afficherFactures(resultats);
         }
     }
+    
 
     private void modifierFacture() {
     	afficherFactures();

@@ -1,4 +1,4 @@
-package model;
+package domain.model;
 
 public class ClientFinal extends Partenaire {
 	private String nomPrenom;

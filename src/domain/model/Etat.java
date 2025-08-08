@@ -1,4 +1,4 @@
-package model;
+package domain.model;
 
 public class Etat {
 	private String nomEtat;

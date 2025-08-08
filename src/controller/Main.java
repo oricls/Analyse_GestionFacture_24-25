@@ -1,19 +1,22 @@
 package controller;
 
-import model.Particulier;
-import repository.EtatRepository;
-import repository.FactureRepository;
+import domain.model.Particulier;
+import domain.repository.IEtatRepository;
+import domain.repository.IFactureRepository;
+import infrastructure.EtatRepository;
+import infrastructure.FactureRepository;
 import utils.Console;
-import view.GestionView;
+import view.IMainView;
+import view.MainView;
 
 public class Main {	
     public static void main(String[] args) {    	
-    	GestionView view = new GestionView();
+    	IMainView view = new MainView();
     	
     	Particulier clientDirect = new Particulier("Roger Bernard", "000000000", "bernard.roger@mail.com");
     	
-    	EtatRepository etatRepo = new EtatRepository();
-    	FactureRepository factureRepo = new FactureRepository(clientDirect);
+    	IEtatRepository etatRepo = new EtatRepository();
+    	IFactureRepository factureRepo = new FactureRepository(clientDirect);
     	
     	EtatController etatController = new EtatController(etatRepo,factureRepo, view);
     	FactureController factureController = new FactureController(etatRepo, factureRepo, clientDirect, view);
@@ -30,6 +33,5 @@ public class Main {
                 case 3 -> factureController.genererEcheancier();
             }
         } while (saisie != 0);
-
     }       
 }

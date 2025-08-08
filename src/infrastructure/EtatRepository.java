@@ -1,16 +1,15 @@
-package repository;
+package infrastructure;
 
 import java.util.ArrayList;
 import java.util.List;
+import domain.model.Etat;
+import domain.repository.IEtatRepository;
 
-import model.Etat;
-
-public class EtatRepository {
+public class EtatRepository implements IEtatRepository {
 	private List<Etat> etats = new ArrayList<>();
 	
 	public EtatRepository() {
-		etats.add(new Etat("Payée", "#000000"));
-		etats.add(new Etat("Non-payée", "#FF0505"));
+		etats = etatsInit();
 	}
 	
 	public boolean addEtat(Etat newEtat) {
@@ -57,6 +56,14 @@ public class EtatRepository {
 	}
 
 	public List<Etat> getEtats() {
+		return etats;
+	}
+	
+	private static List<Etat> etatsInit() {
+		List<Etat> etats = new ArrayList<>();
+		etats.add(new Etat("Payée", "#000000"));
+		etats.add(new Etat("Non-payée", "#FF0505"));
+		
 		return etats;
 	}
 }

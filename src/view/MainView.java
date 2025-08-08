@@ -1,11 +1,11 @@
 package view;
 
 import java.util.List;
-import model.Etat;
-import model.Facture;
+import domain.model.Etat;
+import domain.model.Facture;
 import utils.Console;
 
-public class GestionView {
+public class MainView implements IMainView{
 	
 	public void afficherMenuEtat() {
 		Console.afficherMessage("\n-- GÉRER LES ÉTATS --"
@@ -86,7 +86,6 @@ public class GestionView {
 	public void affichageMenu() {
 		Console.afficherMessage( "\n-- MENU PRINCIPAL --"
 	                + "\n1. Gérer les états"
-	                //+ "\n2. Ajouter client"
 	                + "\n2. Gérer factures"
 	                + "\n3. Créer échéancier"
 	                + "\n0. Fermer le programme");

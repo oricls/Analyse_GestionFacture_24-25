@@ -1,4 +1,4 @@
-package model;
+package domain.model;
 
 public class Fournisseur extends Partenaire {
 	private String numTva;
