@@ -1,0 +1,94 @@
+@startuml
+left to right direction
+
+class Comptable{
+    - nom : String
+    - prenom : String
+    - email : String
+    - mdp : String
+
+
+}
+
+
+class Facture{
+    - numFacture : String
+    - dateFacture : Date
+    - dateEchéance : Date
+    - montantHTVA : double
+    - tauxTVA : double
+
+    --
+    + calculerMontantTVA() : double
+    + calculerMontantTTC() : double
+}
+
+class Chantier{
+    - numChantier : String
+}
+
+class Type{
+    - nomType : String
+}
+
+class Etat {
+    - nomEtat : String
+    - couleurHex : String
+}
+
+class ClientDirect{
+    - nom : String
+    - gsm : String
+    - email : String
+}
+
+class Entreprise {
+    - numTva : String
+}
+
+class Particulier {
+    - numNational : String
+    - prenom : String
+}
+
+class Partenaire {
+    - nom : String
+}
+
+class Fournisseur {
+    - numTVA : String
+}
+
+class ClientFinal {
+    - prenom : String
+}
+
+class Rappel  {
+    - contientRappel : boolean
+
+    --
+    + changerEtatRappel(nouvelEtat : boolean) : void
+}
+'' TODO : echéancier ???
+
+ClientDirect <|-- Entreprise
+ClientDirect <|-- Particulier
+
+Partenaire <|-- Fournisseur
+Partenaire <|-- ClientFinal
+
+
+
+Facture "1..*" -- "1" ClientDirect : Concerne
+Facture "1..*" -- "1" Partenaire
+Facture "0..*" -- "1..*" Comptable
+
+Facture "0..*" -- "1" Etat: Statue <
+Facture "0..*" -- "1"  Type: Caractérise <
+Facture "0..*" -- "1" Chantier : estÉmisePour >
+Facture "0..*" -- "1" Rappel
+
+
+Comptable "1..*" -- "1..*" ClientDirect
+
+@enduml

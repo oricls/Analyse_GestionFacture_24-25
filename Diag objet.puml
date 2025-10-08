@@ -1,0 +1,104 @@
+@startuml
+object "JeanDupont : Comptable" as C {
+    nom = "Jean"
+    prenom = "Dupont"
+    email = "jean.dupont@mail.com"
+    mdp = "123"
+}
+
+
+'' Cas 1 ------------------------------
+package "Dans le cas d'une dépense" {
+    object "Facture1 : Facture" as F1  #fdfadc{
+        numFacture = "f00001"
+        dateFacture = "01/01/2025"
+        dateEchéance = "01/12/2025"
+        montantHTVA = "1200.00"
+        tauxTVA = "0.12"
+    }
+
+    object "Chantier1 : Chantier" as CH1 {
+        numChantier = "CH01"
+    }
+
+    object "Type1 : Type" as T1 #bcf8ba{
+        nomType = "Dépense"
+    }
+
+    object "Etat1 : Etat" as E1 #baf8ee{
+        nomEtat = "Payée"
+        couleurHex = "#000000"
+
+    }
+
+    object "ClientDirect1 : Particulier" as CD1 #f8dcfd{
+        nom = "Roger"
+        prenom = "Bernard"
+        gsm = "04 12.34.56.78"
+        email = "Bernard.Roger@particulier.be"
+        numNational = "01.01.01.01"
+    }
+
+    object "Partenaire1 : Fournisseur" as P1 #LightBlue {
+        nom = "Fournisseur"
+        numTva = "BE9876543210"
+    }
+}
+
+
+
+'' Cas 2 ------------------------------
+
+package "Dans le cas d'une rentrée"{
+    object "Facture2 : Facture" as F2 #fdfadc {
+        numFacture = "f00002"
+        dateFacture = "02/02/2025"
+        dateEchéance = "02/12/2025"
+        montantHTVA = "5000.00"
+        tauxTVA = "0.21"
+    }
+
+    object "Chantier2 : Chantier" as CH2 {
+        numChantier = "CH02"
+    }
+
+    object "Type2 : Type" as T2 #bcf8ba{
+        nomType = "Rentrée"
+    }
+
+    object "Etat2 : Etat" as E2 #baf8ee{
+        nomEtat = "Non payée"
+        couleurHex = "#e52323"
+    }
+
+    object "ClientDirect2 : Entreprise" as CD2  #f8dcfd {
+        nom = "EntrepriseDeConstruction"
+        gsm = "04 12.34.56.78"
+        email = "contact@entreprise.be"
+        numTva = "BE0123456789"
+    }
+
+    object "Partenaire2 : ClientFinal" as P2 #LightBlue {
+        nom = "Michel"
+        prenom = "le ClientFinal"
+    }
+}
+
+C -- F1: Gère
+C -- F2: Gère
+
+F1 -- CH1 : Correspond pour
+F1 -- T1 : Caractérise
+F1 -- E1 : Statue
+C -- CD1 : S'occupe de
+F1 -- CD1 : Concerne
+F1 -- P1 : Est a payer pour
+
+F2 -- CH2 : Correspond pour
+F2 -- T2 : Caractérise
+F2 -- E2 : Statue
+C -- CD2 : S'occupe de
+F2 -- CD2 : Concerne
+F2 -- P2 : Doit payer
+
+@enduml

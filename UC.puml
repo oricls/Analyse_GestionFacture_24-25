@@ -1,0 +1,65 @@
+@startuml
+left to right direction
+
+actor "Gestionnaire comptable" as Actor
+rectangle "Système scanner" as Scanner <<actor>>
+
+package "Système gestion facture" {
+
+    (S'authentifier) as UC1
+    (Modifier profil) as UC2
+    Actor -- UC1
+    Actor -- UC2
+
+    '' Gestion client
+    (Ajouter client) as UC3
+    (Modifier client) as UC4
+    (Archiver client) as UC5
+    (Chercher client) as UC6
+
+    Actor -- UC3
+    Actor -- UC4
+    Actor -- UC5
+    Actor -- UC6
+
+    '' Facturation
+    (Ajouter facture) as UC7
+    (Encoder détails facture) as UC8
+    (Ajouter rappel à facture) as UC9
+    (Modifier facture) as UC10
+    (Chercher facture) as UC11
+    (Trier facture) as UC12
+    '(Importer facture) as UC13
+
+    UC7 --> UC8 : include
+    UC7 --> UC9 : include
+    UC11 <.. UC12 : extend
+
+    note right of UC12
+      Recherche par filtres :
+          - Nom
+          - Dates
+          - Type de facture (rentrée/dépense)
+          - État de paiement (payé/non-payée)
+    end note
+
+    UC7 ---- Scanner
+    Actor -- UC7
+    Actor -- UC10
+    Actor -- UC11
+    'UC7 -- UC13
+
+
+
+
+    '' Échéancier
+    (Générer échéancier) as UC14
+    (Partager échéancier) as UC15
+
+    Actor -- UC14
+    Actor -- UC15
+
+
+
+}
+@enduml
